@@ -1,7 +1,7 @@
 import { CloudRain, FlaskConical, Pill, ShieldCheck, SunMedium } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-type ThreatState = "SAFE" | "WEATHER" | "CAUTION" | "EXPLOSIVE" | "EXPLOSIVE PROXY" | "NARCOTIC" | "NARCOTIC PROXY" | "ALCOHOL";
+type ThreatState = "SAFE" | "WEATHER" | "CAUTION" | "EXPLOSIVE" | "EXPLOSIVE PROXY" | "NARCOTIC" | "NARCOTIC PROXY" | "ALCOHOL" | "ALCOHOL PROXY";
 
 const ICONS: Record<ThreatState, { icon: LucideIcon; label: string }> = {
   SAFE: { icon: ShieldCheck, label: "Safe: item cleared" },
@@ -12,6 +12,7 @@ const ICONS: Record<ThreatState, { icon: LucideIcon; label: string }> = {
   NARCOTIC: { icon: Pill, label: "Possible narcotic threat" },
   "NARCOTIC PROXY": { icon: Pill, label: "Possible narcotic threat" },
   ALCOHOL: { icon: FlaskConical, label: "Alcohol or sanitizer response" },
+  "ALCOHOL PROXY": { icon: FlaskConical, label: "Alcohol or sanitizer response" },
 };
 
 export default function ThreatIcon({ state, size = 24, className = "" }: { state: string; size?: number; className?: string }) {
@@ -55,7 +56,7 @@ export default function ThreatIcon({ state, size = 24, className = "" }: { state
     );
   }
 
-  if (state === "ALCOHOL") {
+  if (state === "ALCOHOL" || state === "ALCOHOL PROXY") {
     return (
       <svg className={className} width={size} height={size} viewBox="0 0 48 48" fill="none" role="img" aria-label={config.label}>
         <title>{config.label}</title>
