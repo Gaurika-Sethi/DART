@@ -95,9 +95,6 @@ print("TinyML model loaded successfully.")
 
 print("\nModel classes:")
 
-for i, label in enumerate(label_classes):
-    print(f"  {i} -> {label}")
-
 print("\nModel input shape:")
 print(model.input_shape)
 
@@ -639,8 +636,8 @@ def get_demo_probabilities(device_id):
 
     elif elapsed < total_cycle_seconds:
         base = np.array([0.08, 0.08, 0.07, 0.68, 0.09])
-        dominant_label = "EXPLOSIVE"
-        phase = "EXPLOSIVE_ALERT"
+        dominant_label = "ALCOHOL"
+        phase = "ALCOHOL_ALERT"
 
     else:
         session["cycle_completed"] = True
@@ -906,8 +903,7 @@ def predict_endpoint():
 
         if prediction in [
             "SAFE",
-            "WEATHER",
-            "ALCOHOL"
+            "WEATHER"
         ]:
 
             system_status = "NON-THREAT"
@@ -1030,11 +1026,6 @@ def predict_endpoint():
         print("Features:")
 
         print(
-            f"  VMQ2        : "
-            f"{features[0]:.5f}"
-        )
-
-        print(
             f"  VMQ3        : "
             f"{features[1]:.5f}"
         )
@@ -1042,11 +1033,6 @@ def predict_endpoint():
         print(
             f"  VMQ135      : "
             f"{features[2]:.5f}"
-        )
-
-        print(
-            f"  dVdt_max    : "
-            f"{features[3]:.5f}"
         )
 
         print(
@@ -1063,7 +1049,8 @@ def predict_endpoint():
         print("Adjusted Probabilities:")
 
         for label, probability in probabilities.items():
-
+            if label == "EXPLOSIVE":
+                continue
             print(
                 f"  {label:10s}: "
                 f"{probability:.4f}"
@@ -1073,7 +1060,8 @@ def predict_endpoint():
         print("Raw ML Probabilities:")
 
         for label, probability in raw_probabilities.items():
-
+            if label == "EXPLOSIVE":
+                continue
             print(
                 f"  {label:10s}: "
                 f"{probability:.4f}"

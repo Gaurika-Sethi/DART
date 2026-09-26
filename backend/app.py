@@ -18,8 +18,8 @@ WINDOW_SIZE = 30
 PREDICTION_INTERVAL_SECONDS = 3.0
 READING_FIELDS = ("temperature", "humidity", "mq2", "mq3", "mq135")
 MODEL_LABELS = ("SAFE", "WEATHER", "ALCOHOL", "EXPLOSIVE", "NARCOTIC")
-NON_THREAT_LABELS = {"SAFE", "WEATHER", "ALCOHOL"}
-THREAT_LABELS = {"EXPLOSIVE", "NARCOTIC"}
+NON_THREAT_LABELS = {"SAFE", "WEATHER"}
+THREAT_LABELS = {"ALCOHOL", "EXPLOSIVE", "NARCOTIC"}
 OPTIONAL_METADATA_FIELDS = ("source_status", "test_object")
 
 # Bind to all local interfaces so the ESP32 can reach the backend on the same LAN.
@@ -175,7 +175,7 @@ def record_alert_event(
 def display_result(prediction: str) -> str:
     return {
         "WEATHER": "CAUTION",
-        "EXPLOSIVE": "EXPLOSIVE PROXY",
+        "EXPLOSIVE": "ALCOHOL PROXY",
         "NARCOTIC": "NARCOTIC PROXY",
     }.get(prediction, prediction)
 

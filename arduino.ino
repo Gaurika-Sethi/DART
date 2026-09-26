@@ -24,11 +24,7 @@ const uint16_t BACKEND_PORT = 8000;
 #define RED_LED_PIN    13
 #define BLUE_LED_PIN   14
 #define SAFE_LED_PIN   BLUE_LED_PIN
-
-/*
- * Buzzer GPIO is intentionally not defined.
- * Add BUZZER_PIN only when the actual GPIO is confirmed.
- */
+#define BUZZER_PIN     RED_LED_PIN
 
 // ---------------- Timing ----------------
 const unsigned long GAS_READ_INTERVAL_MS   = 100;
