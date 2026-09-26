@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Download } from "lucide-react";
-import type { LogEntry } from "../data";
+import { cityLocationForDevice, displayDeviceId, visibleLogEntries, type LogEntry } from "../data";
 
 const DEVICE_KEYWORDS = ["battery","sensor","calibr","connection","temperature","humidity","heartbeat","operator","handover","environmental","noise","firmware"];
-const LC: Record<string, string> = { ALERT:"#B3262E", WARNING:"#D99A27", SUCCESS:"#20C878", INFO:"#C49A4A" };
-const DETECTION_KEYWORDS = ["safe", "caution", "weather", "alcohol", "sanitizer", "narcotic", "explosive"];
+const LC: Record<string, string> = { ALERT:"#E05252", WARNING:"#F4B942", SUCCESS:"#3FB950", INFO:"#F4B942" };
+const DETECTION_KEYWORDS = ["safe", "caution", "weather", "alcohol", "sanitizer", "narcotic"];
 
 function displayEvent(event: string) {
   return event.replace(/\bCAUTION\b/gi, "WEATHER DRIFT");
@@ -14,16 +14,17 @@ export default function SystemLogs({ theme, logs }: { theme: "dark" | "light"; l
   const dark  = theme === "dark";
   const [f, setF] = useState("ALL");
 
-  const bg   = dark ? "bg-obsidian"    : "bg-[#F1EDE3]";
+  const bg   = dark ? "bg-obsidian"    : "bg-[#F5F5F5]";
   const cBg  = dark ? "bg-gunmetal"    : "bg-white";
   const text = dark ? "text-ivory"     : "text-obsidian";
-  const muted= dark ? "text-warm-grey" : "text-[#6F6A61]";
-  const bdr  = dark ? "border-warm-grey/10" : "border-obsidian/8";
+  const muted= dark ? "text-warm-grey" : "text-[#8C9199]";
+  const bdr  = dark ? "border-border" : "border-border";
+  const filteredLogs = visibleLogEntries(logs);
 
   const filtered =
-    f === "ALERTS"  ? logs.filter(l => l.level === "ALERT" || DETECTION_KEYWORDS.some(keyword => l.event.toLowerCase().includes(keyword))) :
-    f === "DEVICES" ? logs.filter(l => DEVICE_KEYWORDS.some(k => l.event.toLowerCase().includes(k))) :
-    logs;
+    f === "ALERTS"  ? filteredLogs.filter(l => l.level === "ALERT" || DETECTION_KEYWORDS.some(keyword => l.event.toLowerCase().includes(keyword))) :
+    f === "DEVICES" ? filteredLogs.filter(l => DEVICE_KEYWORDS.some(k => l.event.toLowerCase().includes(k))) :
+    filteredLogs;
 
   function exportLogs() {
     const header = "TIMESTAMP,DEVICE,EVENT,LOCATION,STATUS\n";
@@ -31,7 +32,7 @@ export default function SystemLogs({ theme, logs }: { theme: "dark" | "light"; l
     const blob   = new Blob([header + rows], { type: "text/csv" });
     const url    = URL.createObjectURL(blob);
     const a      = document.createElement("a");
-    a.href = url; a.download = `sentry-logs-${Date.now()}.csv`; a.click();
+    a.href = url; a.download = `dart-logs-${Date.now()}.csv`; a.click();
     URL.revokeObjectURL(url);
   }
 
@@ -50,10 +51,10 @@ export default function SystemLogs({ theme, logs }: { theme: "dark" | "light"; l
         {/* Summary tiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
           {[
-            { l: "TOTAL ENTRIES",  v: logs.length,                                   c: "#C49A4A" },
-            { l: "ALERTS",         v: logs.filter(l => l.level === "ALERT").length,   c: "#B3262E" },
-            { l: "WARNINGS",       v: logs.filter(l => l.level === "WARNING").length, c: "#D99A27" },
-            { l: "SUCCESSFUL OPS", v: logs.filter(l => l.level === "SUCCESS").length, c: "#20C878" },
+            { l: "TOTAL ENTRIES",  v: filteredLogs.length,                                             c: "#F4B942" },
+            { l: "ALERTS",         v: filteredLogs.filter(l => l.level === "ALERT").length,             c: "#E05252" },
+            { l: "WARNINGS",       v: filteredLogs.filter(l => l.level === "WARNING").length,           c: "#F4B942" },
+            { l: "SUCCESSFUL OPS", v: filteredLogs.filter(l => l.level === "SUCCESS").length,           c: "#3FB950" },
           ].map(s => (
             <div key={s.l} className={`panel ${cBg} p-3`}>
               <div className={`font-mono text-[8px] tracking-widest ${muted} mb-1`}>{s.l}</div>
@@ -91,7 +92,7 @@ export default function SystemLogs({ theme, logs }: { theme: "dark" | "light"; l
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className={`border-b ${bdr} ${dark ? "bg-charcoal/50" : "bg-[#F4F0E8]"}`}>
+                <tr className={`border-b ${bdr} ${dark ? "bg-charcoal/50" : "bg-[#15171A]"}`}>
                   {["TIMESTAMP", "DEVICE", "EVENT", "LOCATION", "STATUS"].map(h => (
                     <th key={h} className={`px-4 py-2.5 font-mono text-[8.5px] tracking-[.2em] uppercase ${muted}`}>{h}</th>
                   ))}
@@ -99,14 +100,14 @@ export default function SystemLogs({ theme, logs }: { theme: "dark" | "light"; l
               </thead>
               <tbody>
                 {filtered.map((l, i) => {
-                  const c = LC[l.level] || "#A8A39A";
+                  const c = LC[l.level] || "#8C9199";
                   return (
                     <tr key={i} className={`border-b ${bdr} transition-colors hover:bg-signal-red/5`}
-                      style={{ background: i % 2 === 0 ? (dark ? "rgba(29,32,35,.25)" : "rgba(244,240,234,.35)") : undefined }}>
+                      style={{ background: i % 2 === 0 ? (dark ? "rgba(21,23,26,.25)" : "rgba(21,23,26,.35)") : undefined }}>
                       <td className="px-4 py-2.5 font-mono text-[9.5px] text-brass whitespace-nowrap">{l.timestamp}</td>
-                      <td className="px-4 py-2.5 font-mono text-[9.5px] text-brass whitespace-nowrap">{l.device}</td>
+                      <td className="px-4 py-2.5 font-mono text-[9.5px] text-brass whitespace-nowrap">{displayDeviceId(l.device)}</td>
                       <td className={`px-4 py-2.5 font-mono text-[9.5px] ${text} max-w-[240px] truncate`}>{displayEvent(l.event)}</td>
-                      <td className={`px-4 py-2.5 font-mono text-[9.5px] ${muted} whitespace-nowrap`}>{l.location}</td>
+                      <td className={`px-4 py-2.5 font-mono text-[9.5px] ${muted} whitespace-nowrap`}>{cityLocationForDevice(l.device,l.location)}</td>
                       <td className="px-4 py-2.5 whitespace-nowrap">
                         <span className="font-mono text-[8.5px] tracking-widest px-1.5 py-[2px]"
                           style={{ background: `${c}20`, color: c, border: `1px solid ${c}40` }}>
@@ -120,13 +121,13 @@ export default function SystemLogs({ theme, logs }: { theme: "dark" | "light"; l
             </table>
           </div>
           <div className={`px-4 py-2.5 border-t ${bdr} flex items-center justify-between`}>
-            <div className={`font-mono text-[8.5px] tracking-widest ${muted}`}>SHOWING {filtered.length} OF {logs.length} ENTRIES</div>
+            <div className={`font-mono text-[8.5px] tracking-widest ${muted}`}>SHOWING {filtered.length} OF {filteredLogs.length} ENTRIES</div>
             <div className="font-mono text-[8.5px] tracking-widest text-brass">LAST REFRESH: {new Date().toLocaleTimeString("en-IN", { hour12: false })}</div>
           </div>
         </div>
 
         <div className={`font-mono text-[8.5px] tracking-widest ${muted} text-center`}>
-          SENTRY OS // AUDIT LOG — ALL ENTRIES CRYPTOGRAPHICALLY SIGNED // TAMPER-EVIDENT RECORD
+          DART OS // AUDIT LOG — ALL ENTRIES CRYPTOGRAPHICALLY SIGNED // TAMPER-EVIDENT RECORD
         </div>
       </div>
     </div>

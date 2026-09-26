@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { AlertTriangle, MapPin, Cpu, CheckCircle, X } from "lucide-react";
 import ThreatIcon from "../components/ThreatIcon";
-import { truncateConfidencePercent, type Incident } from "../data";
+import { cityLocationForDevice, DEMO_DEVICES, displayDeviceId, truncateConfidencePercent, type Incident } from "../data";
+import CityMap from "../components/CityMap";
 
 interface Props {
   theme: "dark" | "light";
@@ -24,7 +25,7 @@ function Modal({ title, msg, onOk, onCancel, dark, okLabel, okClass }: {
             <AlertTriangle className="w-5 h-5 text-signal-red flex-shrink-0" />
             <div className={`font-heading text-[13px] tracking-widest font-semibold ${dark ? "text-ivory" : "text-obsidian"}`}>{title}</div>
           </div>
-          <p className={`font-mono text-[10px] leading-relaxed ${dark ? "text-warm-grey" : "text-[#6F6A61]"} mb-5`}>{msg}</p>
+          <p className={`font-mono text-[10px] leading-relaxed ${dark ? "text-warm-grey" : "text-[#8C9199]"} mb-5`}>{msg}</p>
           <div className="flex gap-2">
             <button onClick={onCancel} className="btn-ghost flex-1 text-[11px]">CANCEL</button>
             <button onClick={onOk} className={`${okClass || "btn-primary"} flex-1 text-[11px]`}>{okLabel}</button>
@@ -42,11 +43,11 @@ export default function AnomalyAlert({ theme, incident, onAcknowledge, onResolve
   const [showResConfirm, setResConf]  = useState(false);
   const [showLoc, setLoc]         = useState(false);
 
-  const bg   = dark ? "bg-obsidian"    : "bg-[#F1EDE3]";
+  const bg   = dark ? "bg-obsidian"    : "bg-[#F5F5F5]";
   const cBg  = dark ? "bg-gunmetal"    : "bg-white";
   const text = dark ? "text-ivory"     : "text-obsidian";
-  const muted= dark ? "text-warm-grey" : "text-[#6F6A61]";
-  const bdr  = dark ? "border-warm-grey/10" : "border-obsidian/8";
+  const muted= dark ? "text-warm-grey" : "text-[#8C9199]";
+  const bdr  = dark ? "border-border" : "border-border";
   if (!incident) {
     return (
       <div className={`min-h-full ${bg} p-4 md:p-6`}>
@@ -88,9 +89,9 @@ export default function AnomalyAlert({ theme, incident, onAcknowledge, onResolve
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {[
-                    { l: "DEVICE",   v: activeIncident.device,   ic: Cpu },
-                    { l: "LOCATION", v: activeIncident.location, ic: MapPin },
-                    { l: "PLATFORM", v: activeIncident.platform, ic: MapPin },
+                    { l: "DEVICE",   v: displayDeviceId(activeIncident.device), ic: Cpu },
+                    { l: "LOCATION", v: cityLocationForDevice(activeIncident.device, activeIncident.location), ic: MapPin },
+                    { l: "DISTRICT", v: activeIncident.platform, ic: MapPin },
                   ].map(item => (
                     <div key={item.l} className="p-3 border border-signal-red/18 bg-signal-red/5">
                       <div className="flex items-center gap-1.5 mb-1">
@@ -104,26 +105,28 @@ export default function AnomalyAlert({ theme, incident, onAcknowledge, onResolve
               </div>
 
               {/* Mini map */}
-              <div className={`w-full md:w-64 h-48 relative overflow-hidden ${dark ? "bg-obsidian" : "bg-[#E0DBD0]"} border border-signal-red/30 flex-shrink-0`}>
-                <div className="absolute inset-0 grid-bg" />
+              <div className="w-full md:w-64 h-48 relative overflow-hidden border border-signal-red/30 flex-shrink-0">
+                <CityMap devices={DEMO_DEVICES} selectedId={activeIncident.device} className="absolute inset-0" />
+                <div className="absolute bottom-2 left-2 font-mono text-[7.5px] text-signal-red tracking-widest">ALERT LOCATION</div>
+                <div className="hidden">
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 200" preserveAspectRatio="xMidYMid meet">
-                  <rect x="10" y="8"   width="280" height="184" fill="none" stroke="#C49A4A" strokeWidth=".5" strokeOpacity=".15" />
-                  <rect x="30" y="25"  width="240" height="32"  fill="none" stroke="#C49A4A" strokeWidth=".6" strokeOpacity=".2" />
-                  <line x1="30" y1="34" x2="270" y2="34" stroke="#C49A4A" strokeWidth="1.2" strokeOpacity=".25" />
-                  <line x1="30" y1="47" x2="270" y2="47" stroke="#C49A4A" strokeWidth="1.2" strokeOpacity=".25" />
-                  <text x="150" y="32" textAnchor="middle" fontSize="6" fill="#C49A4A" fillOpacity=".5" fontFamily="JetBrains Mono,monospace">PLATFORM 3</text>
-                  <rect x="30" y="80"  width="240" height="32"  fill="none" stroke="#C49A4A" strokeWidth=".6" strokeOpacity=".2" />
-                  <line x1="30" y1="89"  x2="270" y2="89"  stroke="#C49A4A" strokeWidth="1.2" strokeOpacity=".25" />
-                  <line x1="30" y1="102" x2="270" y2="102" stroke="#C49A4A" strokeWidth="1.2" strokeOpacity=".25" />
-                  <text x="150" y="87" textAnchor="middle" fontSize="6" fill="#C49A4A" fillOpacity=".5" fontFamily="JetBrains Mono,monospace">PLATFORM 5</text>
-                  <rect x="10" y="82"  width="28"  height="48"  fill="none" stroke="#B3262E" strokeWidth=".8" strokeOpacity=".5" />
-                  <text x="24" y="98"  textAnchor="middle" fontSize="5.5" fill="#B3262E" fillOpacity=".8" fontFamily="JetBrains Mono,monospace">GATE</text>
-                  <text x="24" y="107" textAnchor="middle" fontSize="5.5" fill="#B3262E" fillOpacity=".8" fontFamily="JetBrains Mono,monospace">2</text>
+                  <rect x="10" y="8"   width="280" height="184" fill="none" stroke="#F4B942" strokeWidth=".5" strokeOpacity=".15" />
+                  <rect x="30" y="25"  width="240" height="32"  fill="none" stroke="#F4B942" strokeWidth=".6" strokeOpacity=".2" />
+                  <line x1="30" y1="34" x2="270" y2="34" stroke="#F4B942" strokeWidth="1.2" strokeOpacity=".25" />
+                  <line x1="30" y1="47" x2="270" y2="47" stroke="#F4B942" strokeWidth="1.2" strokeOpacity=".25" />
+                  <text x="150" y="32" textAnchor="middle" fontSize="6" fill="#F4B942" fillOpacity=".5" fontFamily="JetBrains Mono,monospace">PLATFORM 3</text>
+                  <rect x="30" y="80"  width="240" height="32"  fill="none" stroke="#F4B942" strokeWidth=".6" strokeOpacity=".2" />
+                  <line x1="30" y1="89"  x2="270" y2="89"  stroke="#F4B942" strokeWidth="1.2" strokeOpacity=".25" />
+                  <line x1="30" y1="102" x2="270" y2="102" stroke="#F4B942" strokeWidth="1.2" strokeOpacity=".25" />
+                  <text x="150" y="87" textAnchor="middle" fontSize="6" fill="#F4B942" fillOpacity=".5" fontFamily="JetBrains Mono,monospace">PLATFORM 5</text>
+                  <rect x="10" y="82"  width="28"  height="48"  fill="none" stroke="#E05252" strokeWidth=".8" strokeOpacity=".5" />
+                  <text x="24" y="98"  textAnchor="middle" fontSize="5.5" fill="#E05252" fillOpacity=".8" fontFamily="JetBrains Mono,monospace">GATE</text>
+                  <text x="24" y="107" textAnchor="middle" fontSize="5.5" fill="#E05252" fillOpacity=".8" fontFamily="JetBrains Mono,monospace">2</text>
                 </svg>
                 <div className="absolute" style={{ left: "11%", top: "67%", transform: "translate(-50%,-50%)" }}>
                   <div className="w-5 h-5 rounded-full bg-signal-red border-2 border-ivory pulse-red" />
                 </div>
-                <div className="absolute bottom-2 left-2 font-mono text-[7.5px] text-signal-red tracking-widest">ALERT LOCATION</div>
+                </div>
               </div>
             </div>
           </div>
@@ -136,13 +139,13 @@ export default function AnomalyAlert({ theme, incident, onAcknowledge, onResolve
             <div className="font-mono text-[9px] tracking-[.2em] uppercase text-brass mb-4">DETECTION DETAILS</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
               {[
-                { l: "DETECTION TYPE",  v: activeIncident.type,    c: "#B3262E" },
-                { l: "DEVICE STATUS",   v: "ACTIVE",             c: "#20C878" },
-                { l: "LOCATION STATUS", v: "RESPONSE REQUIRED",  c: "#B3262E" },
-                { l: "MQ-135 READING",  v: activeIncident.latestReading ? `${activeIncident.latestReading.mq135} ADC` : "NOT AVAILABLE", c: "#D99A27" },
-                { l: "MQ-2 READING",    v: activeIncident.latestReading ? `${activeIncident.latestReading.mq2} ADC` : "NOT AVAILABLE",   c: "#D99A27" },
-                { l: "TEMPERATURE",     v: activeIncident.latestReading ? `${activeIncident.latestReading.temperature.toFixed(2)}°C` : "NOT AVAILABLE", c: "#A8A39A" },
-                { l: "HUMIDITY",        v: activeIncident.latestReading ? `${activeIncident.latestReading.humidity.toFixed(2)}%` : "NOT AVAILABLE", c: "#A8A39A" },
+                { l: "DETECTION TYPE",  v: activeIncident.type,    c: "#E05252" },
+                { l: "DEVICE STATUS",   v: "ACTIVE",             c: "#3FB950" },
+                { l: "LOCATION STATUS", v: "RESPONSE REQUIRED",  c: "#E05252" },
+                { l: "MQ-135 READING",  v: activeIncident.latestReading ? `${activeIncident.latestReading.mq135} ADC` : "NOT AVAILABLE", c: "#F4B942" },
+                { l: "MQ-2 READING",    v: activeIncident.latestReading ? `${activeIncident.latestReading.mq2} ADC` : "NOT AVAILABLE",   c: "#F4B942" },
+                { l: "TEMPERATURE",     v: activeIncident.latestReading ? `${activeIncident.latestReading.temperature.toFixed(2)}°C` : "NOT AVAILABLE", c: "#8C9199" },
+                { l: "HUMIDITY",        v: activeIncident.latestReading ? `${activeIncident.latestReading.humidity.toFixed(2)}%` : "NOT AVAILABLE", c: "#8C9199" },
               ].map(r => (
                 <div key={r.l} className={`flex items-center gap-3 py-2.5 border-b ${bdr} last:border-0`}>
                   <span className={`font-mono text-[8.5px] tracking-widest flex-1 ${muted}`}>{r.l}</span>
@@ -180,7 +183,7 @@ export default function AnomalyAlert({ theme, incident, onAcknowledge, onResolve
 
             {ack && (
               <span className="font-mono text-[9px] text-safe tracking-widest">
-                ● Recognised by RAIL_ADM_001 at {new Date().toLocaleTimeString("en-IN", { hour12: false })}
+                ● Recognised by DART_OPS_001 at {new Date().toLocaleTimeString("en-IN", { hour12: false })}
               </span>
             )}
           </div>
@@ -191,7 +194,7 @@ export default function AnomalyAlert({ theme, incident, onAcknowledge, onResolve
       {showAckConfirm && (
         <Modal
           title="ISSUE RECOGNISED"
-          msg={`Confirm that INCIDENT #${activeIncident.id} has been recognised. This logs your Rail ID and timestamp. Field team must be aware before confirming.`}
+          msg={`Confirm that INCIDENT #${activeIncident.id} has been recognised. This logs your DART operator ID and timestamp. Field team must be aware before confirming.`}
           onOk={() => { setAck(true); setAckConf(false); onAcknowledge(activeIncident.id); }}
           onCancel={() => setAckConf(false)}
           dark={dark}
@@ -224,16 +227,13 @@ export default function AnomalyAlert({ theme, incident, onAcknowledge, onResolve
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <div className={`h-44 ${dark ? "bg-obsidian" : "bg-[#E0DBD0]"} border border-signal-red/30 relative overflow-hidden grid-bg mb-4`}>
-                <div className="absolute" style={{ left: "18%", top: "62%", transform: "translate(-50%,-50%)" }}>
-                  <div className="w-5 h-5 rounded-full bg-signal-red border-2 border-ivory pulse-red" />
-                </div>
-                <div className="absolute bottom-2 right-2 font-mono text-[7.5px] text-signal-red">{activeIncident.location} // {activeIncident.platform}</div>
-              </div>
+              <CityMap devices={DEMO_DEVICES} selectedId={activeIncident.device} className="h-44 border border-signal-red/30 mb-4">
+                <div className="absolute bottom-2 right-2 font-mono text-[7.5px] text-signal-red">{cityLocationForDevice(activeIncident.device, activeIncident.location)}</div>
+              </CityMap>
               <div className="space-y-1.5 font-mono text-[9.5px]">
-                <div className="flex justify-between"><span className={muted}>COORDINATES</span><span className="text-brass">28.6447°N, 77.2086°E</span></div>
-                <div className="flex justify-between"><span className={muted}>ZONE</span><span className={text}>{activeIncident.location} // {activeIncident.platform}</span></div>
-                <div className="flex justify-between"><span className={muted}>STATION</span><span className={text}>NEW DELHI JN (NDLS)</span></div>
+                <div className="flex justify-between"><span className={muted}>CITY</span><span className="text-brass">NEW DELHI, INDIA</span></div>
+                <div className="flex justify-between"><span className={muted}>AREA</span><span className={text}>{cityLocationForDevice(activeIncident.device, activeIncident.location)}</span></div>
+                <div className="flex justify-between"><span className={muted}>DISTRICT</span><span className={text}>{activeIncident.platform}</span></div>
               </div>
             </div>
           </div>

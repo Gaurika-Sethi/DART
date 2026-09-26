@@ -1,14 +1,12 @@
 import { CloudRain, FlaskConical, Pill, ShieldCheck, SunMedium } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-type ThreatState = "SAFE" | "WEATHER" | "CAUTION" | "EXPLOSIVE" | "EXPLOSIVE PROXY" | "NARCOTIC" | "NARCOTIC PROXY" | "ALCOHOL" | "ALCOHOL PROXY";
+type ThreatState = "SAFE" | "WEATHER" | "CAUTION" | "NARCOTIC" | "NARCOTIC PROXY" | "ALCOHOL" | "ALCOHOL PROXY";
 
 const ICONS: Record<ThreatState, { icon: LucideIcon; label: string }> = {
   SAFE: { icon: ShieldCheck, label: "Safe: item cleared" },
   WEATHER: { icon: CloudRain, label: "Weather variation" },
   CAUTION: { icon: CloudRain, label: "Weather variation" },
-  EXPLOSIVE: { icon: CloudRain, label: "Possible explosive threat" },
-  "EXPLOSIVE PROXY": { icon: CloudRain, label: "Possible explosive threat" },
   NARCOTIC: { icon: Pill, label: "Possible narcotic threat" },
   "NARCOTIC PROXY": { icon: Pill, label: "Possible narcotic threat" },
   ALCOHOL: { icon: FlaskConical, label: "Alcohol or sanitizer response" },
@@ -18,22 +16,6 @@ const ICONS: Record<ThreatState, { icon: LucideIcon; label: string }> = {
 export default function ThreatIcon({ state, size = 24, className = "" }: { state: string; size?: number; className?: string }) {
   const config = ICONS[state as ThreatState] || ICONS.SAFE;
   const Icon = config.icon;
-
-  if (state === "EXPLOSIVE" || state === "EXPLOSIVE PROXY") {
-    return (
-      <svg className={className} width={size} height={size} viewBox="0 0 64 48" fill="none" role="img" aria-label={config.label}>
-        <title>{config.label}</title>
-        <path d="M9 12.5h38a4 4 0 0 1 4 4v4H9a4 4 0 0 1 0-8Z" fill="currentColor" opacity=".9" />
-        <path d="M9 23.5h38a4 4 0 0 1 4 4v4H9a4 4 0 0 1 0-8Z" fill="currentColor" opacity=".78" />
-        <path d="M9 34.5h38a4 4 0 0 1 4 4v4H9a4 4 0 0 1 0-8Z" fill="currentColor" opacity=".62" />
-        <path d="M15 10v32M42 10v32" stroke="currentColor" strokeWidth="2.2" opacity=".95" />
-        <rect x="24" y="18" width="21" height="15" rx="2" fill="var(--color-obsidian, #08090A)" stroke="currentColor" strokeWidth="1.7" />
-        <path d="M28 22v7M31 22v7M34 22v7M39 22v7M42 22v7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        <path d="M34.5 18v-4c0-2 1.5-3 3.5-3h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-        <path d="M42 11c3-2 4 1 6-1 2-2 3 1 5-1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    );
-  }
 
   if (state === "WEATHER" || state === "CAUTION") {
     return (

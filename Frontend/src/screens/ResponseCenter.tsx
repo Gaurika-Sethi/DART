@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { truncateConfidencePercent, type AlertEvent, type Incident } from "../data";
+import { cityLocationForDevice, displayDeviceId, isVisibleDetection, truncateConfidencePercent, type AlertEvent, type Incident } from "../data";
 import ThreatIcon from "../components/ThreatIcon";
 
 type IncStatus = "LIVE" | "RECOGNISED" | "RESOLVED";
@@ -12,15 +12,15 @@ const STATUS_MAP: Record<string, IncStatus> = {
 };
 
 const STATUS_COLOR: Record<IncStatus, string> = {
-  LIVE:       "#B3262E",
-  RECOGNISED: "#D99A27",
-  RESOLVED:   "#20C878",
+  LIVE:       "#E05252",
+  RECOGNISED: "#F4B942",
+  RESOLVED:   "#3FB950",
 };
 
 const GLOW: Record<IncStatus, string> = {
-  LIVE:       "0 0 10px #B3262E99, 0 0 24px #B3262E44",
-  RECOGNISED: "0 0 10px #D99A2799, 0 0 24px #D99A2744",
-  RESOLVED:   "0 0 10px #20C87899, 0 0 24px #20C87844",
+  LIVE:       "0 0 10px #E0525299, 0 0 24px #E0525244",
+  RECOGNISED: "0 0 10px #F4B94299, 0 0 24px #F4B94244",
+  RESOLVED:   "0 0 10px #3FB95099, 0 0 24px #3FB95044",
 };
 
 function displayResult(result: string) {
@@ -29,15 +29,15 @@ function displayResult(result: string) {
 
 export default function ThreatHistory({ theme, incidents, alertEvents }: { theme: "dark" | "light"; incidents: Incident[]; alertEvents: AlertEvent[] }) {
   const dark  = theme === "dark";
-  const bg    = dark ? "bg-obsidian"   : "bg-[#F1EDE3]";
+  const bg    = dark ? "bg-obsidian"   : "bg-[#F5F5F5]";
   const cBg   = dark ? "bg-gunmetal"   : "bg-white";
   const text  = dark ? "text-ivory"    : "text-obsidian";
-  const muted = dark ? "text-warm-grey": "text-[#6F6A61]";
-  const bdr   = dark ? "border-warm-grey/10" : "border-obsidian/8";
+  const muted = dark ? "text-warm-grey": "text-[#8C9199]";
+  const bdr   = dark ? "border-border" : "border-border";
 
   const [filter, setFilter] = useState<"ALL" | IncStatus>("ALL");
 
-  const tc = (t: string) => t.includes("EXPLOSIVE") || t.includes("NARCOTIC") ? "#B3262E" : "#D99A27";
+  const tc = (type: string) => isVisibleDetection(type) ? "#E05252" : "#8C9199";
 
   const items = incidents.map(inc => ({
     ...inc,
@@ -66,8 +66,8 @@ export default function ThreatHistory({ theme, incidents, alertEvents }: { theme
         {/* Summary — only ACTIVE + RESOLVED */}
         <div className="grid grid-cols-2 gap-3">
           {([
-            { l: "ACTIVE INCIDENTS", v: counts.LIVE,     c: "#B3262E", glow: GLOW.LIVE     },
-            { l: "RESOLVED TODAY",   v: counts.RESOLVED,  c: "#20C878", glow: GLOW.RESOLVED },
+            { l: "ACTIVE INCIDENTS", v: counts.LIVE,     c: "#E05252", glow: GLOW.LIVE     },
+            { l: "RESOLVED TODAY",   v: counts.RESOLVED,  c: "#3FB950", glow: GLOW.RESOLVED },
           ] as const).map(s => (
             <div key={s.l} className={`panel ${cBg} p-4 flex flex-col gap-1`}
               style={{ boxShadow: s.v > 0 ? s.glow : undefined }}>
@@ -98,13 +98,13 @@ export default function ThreatHistory({ theme, incidents, alertEvents }: { theme
                   <div key={event.id} className={`flex flex-col md:flex-row md:items-center justify-between gap-2 p-3 border ${bdr}`}>
                     <div>
                       <div className="font-mono text-[9px] tracking-widest text-brass">{event.created_at}</div>
-                      <div className="font-mono text-[10px] text-ivory">{event.device_id} / {event.location || "Unknown"}</div>
+                      <div className="font-mono text-[10px] text-ivory">{displayDeviceId(event.device_id)} / {cityLocationForDevice(event.device_id,event.location || "Unknown")}</div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-[8.5px] px-2 py-1" style={{ background: `${tc(event.display_result)}20`, color: tc(event.display_result), border: `1px solid ${tc(event.display_result)}40` }}>
                         {event.display_result}
                       </span>
-                      <span className="font-mono text-[8px] tracking-widest uppercase" style={{ color: event.resolved_at ? "#20C878" : "#B3262E" }}>
+                      <span className="font-mono text-[8px] tracking-widest uppercase" style={{ color: event.resolved_at ? "#3FB950" : "#E05252" }}>
                         {event.resolved_at ? "RESOLVED" : "ACTIVE"}
                       </span>
                     </div>
@@ -155,11 +155,11 @@ export default function ThreatHistory({ theme, incidents, alertEvents }: { theme
 
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                     {[
-                      { l: "LOCATION",   v: inc.location },
-                      { l: "PLATFORM",   v: inc.platform },
+                      { l: "LOCATION",   v: cityLocationForDevice(inc.device,inc.location) },
+                      { l: "DISTRICT",   v: inc.platform },
                       { l: "CONFIDENCE", v: `${truncateConfidencePercent(inc.confidence)}%` },
                     ].map(r => (
-                      <div key={r.l} className={`p-2 ${dark ? "bg-charcoal" : "bg-[#F4F0E8]"}`}>
+                      <div key={r.l} className={`p-2 ${dark ? "bg-charcoal" : "bg-[#15171A]"}`}>
                         <div className={`font-mono text-[7.5px] tracking-widest ${muted} mb-0.5`}>{r.l}</div>
                         <div className={`font-mono text-[11px] ${text}`}>{r.v}</div>
                       </div>
@@ -168,7 +168,7 @@ export default function ThreatHistory({ theme, incidents, alertEvents }: { theme
 
                   <div className={`mt-3 pt-2.5 border-t ${bdr}`}>
                     <span className={`font-mono text-[8.5px] ${muted}`}>DEVICE // </span>
-                    <span className="font-mono text-[9.5px] text-brass">{inc.device}</span>
+                    <span className="font-mono text-[9.5px] text-brass">{displayDeviceId(inc.device)}</span>
                   </div>
                 </div>
               </div>

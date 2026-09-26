@@ -12,7 +12,7 @@ import AnomalyAlert from "./screens/AnomalyAlert";
 import ThreatHistory from "./screens/ResponseCenter";
 import Devices from "./screens/Devices";
 import SystemLogs from "./screens/SystemLogs";
-import { truncateConfidencePercent, type AlertEvent, type Device, type Incident, type LogEntry } from "./data";
+import { cityLocationForDevice, dashboardDeviceFeed, dashboardIncidentFeed, DEMO_DEVICES, DEMO_INCIDENTS, displayDeviceId, isAlcoholResult, isNarcoticResult, truncateConfidencePercent, visibleAlertEvents, visibleLogEntries, type AlertEvent, type Device, type Incident, type LogEntry } from "./data";
 
 /* ── Toast ── */
 interface Toast { id:number; msg:string; type:"alert"|"warning"|"info"|"success"; state:string; }
@@ -24,7 +24,7 @@ function ToastBar({ toasts, onDismiss }:{ toasts:Toast[]; onDismiss:(id:number)=
           t.type==="alert" ?"bg-signal-red border-signal-red/60 text-ivory"
           :t.type==="warning"?"bg-caution border-caution/60 text-obsidian"
           :t.type==="success"?"bg-safe/90 border-safe/50 text-ivory"
-          :"bg-charcoal border-warm-grey/20 text-ivory"
+          :"bg-charcoal border-border text-ivory"
         }`}>
           <ThreatIcon state={t.state} size={28} className="flex-shrink-0" />
           <span className="font-mono text-[10px] tracking-widest flex-1">{t.msg}</span>
@@ -43,16 +43,18 @@ export default function App() {
   const [devId, setDevId]         = useState("SENTRY-032");
   const [mobileNav, setMobileNav] = useState(false);
   const [toasts, setToasts]       = useState<Toast[]>([]);
-  const [toastId, setToastId]     = useState(0);
-  const [devices, setDevices]     = useState<Device[]>([]);
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const toastSequence = useRef(0);
+  const demoNotificationsShown = useRef(false);
+  const [devices, setDevices]     = useState<Device[]>(DEMO_DEVICES);
+  const [incidents, setIncidents] = useState<Incident[]>(DEMO_INCIDENTS);
   const [alertEvents, setAlertEvents] = useState<AlertEvent[]>([]);
   const [logs, setLogs]           = useState<LogEntry[]>([]);
-  const [summary, setSummary]     = useState({ connectedDevices: 0, online: 0, offline: 0, activeAlerts: 0 });
+  const [summary, setSummary]     = useState({ connectedDevices: 7, online: 5, offline: 1, activeAlerts: 1 });
   const seenIncidentIds = useRef<Set<string> | null>(null);
+  const demoIncidentOverrides = useRef(new Map<string, Incident["status"]>());
 
   function addToast(msg:string, type:Toast["type"]="info", state="SAFE") {
-    const id=toastId+1; setToastId(id);
+    const id = ++toastSequence.current;
     setToasts(t=>[...t,{id,msg,type,state}]);
     setTimeout(()=>setToasts(t=>t.filter(x=>x.id!==id)),4500);
   }
@@ -66,21 +68,26 @@ export default function App() {
           getDevices(), getDashboardSummary(), getIncidents(), getLogs(), getAlertEvents(),
         ]);
         if (!active) return;
-        setDevices(nextDevices);
+        const nextDisplayIncidents = dashboardIncidentFeed(nextIncidents).map(incident => ({
+          ...incident,
+          status: demoIncidentOverrides.current.get(incident.id) ?? incident.status,
+        }));
+        setDevices(dashboardDeviceFeed(nextDevices, nextDisplayIncidents));
         setSummary(nextSummary);
-        setIncidents(nextIncidents);
-        setAlertEvents(nextAlertEvents);
-        setLogs(nextLogs);
+        setIncidents(nextDisplayIncidents);
+        setAlertEvents(visibleAlertEvents(nextAlertEvents));
+        setLogs(visibleLogEntries(nextLogs));
 
-        const currentIds = new Set(nextIncidents.map(incident => incident.id));
+        const currentIds = new Set(nextDisplayIncidents.map(incident => incident.id));
         if (seenIncidentIds.current) {
-          nextIncidents
-            .filter(incident => !seenIncidentIds.current?.has(incident.id) && incident.status !== "RESOLVED" && incident.type !== "ALCOHOL")
+          nextDisplayIncidents
+            .filter(incident => !seenIncidentIds.current?.has(incident.id) && (isAlcoholResult(incident.type) || isNarcoticResult(incident.type)))
             .forEach(incident => {
-              const isWarning = incident.type === "ALCOHOL";
+              const detection = isAlcoholResult(incident.type) ? "ALCOHOL" : "NARCOTIC";
+              const resolution = incident.status === "RESOLVED" ? " // RESOLVED" : "";
               addToast(
-                `${isWarning ? "WARNING" : "ANOMALY DETECTED"} — ${incident.device} / ${incident.location} — ${incident.type} ${truncateConfidencePercent(incident.confidence)}%`,
-                isWarning ? "warning" : "alert",
+                `${detection} DETECTED${resolution} — ${displayDeviceId(incident.device)} / ${cityLocationForDevice(incident.device, incident.location)} — ${truncateConfidencePercent(incident.confidence)}%`,
+                "alert",
                 incident.type,
               );
             });
@@ -96,21 +103,45 @@ export default function App() {
   }, [loggedIn]);
 
   async function handleAcknowledge(id: string) {
+    if (id.startsWith("DEMO-")) {
+      demoIncidentOverrides.current.set(id, "ACKNOWLEDGED");
+      setIncidents(current => current.map(incident => incident.id === id ? { ...incident, status: "ACKNOWLEDGED" } : incident));
+      return;
+    }
     await acknowledgeIncident(id);
-    setIncidents(await getIncidents());
+    setIncidents(dashboardIncidentFeed(await getIncidents()));
   }
 
   async function handleResolve(id: string) {
+    if (id.startsWith("DEMO-")) {
+      demoIncidentOverrides.current.set(id, "RESOLVED");
+      setIncidents(current => current.map(incident => incident.id === id ? { ...incident, status: "RESOLVED" } : incident));
+      return;
+    }
     await resolveIncident(id);
-    setIncidents(await getIncidents());
+    setIncidents(dashboardIncidentFeed(await getIncidents()));
   }
 
   if(!loggedIn) {
-    return <Login onLogin={()=>setLoggedIn(true)} />;
+    return <Login onLogin={()=>{
+      setLoggedIn(true);
+      if (demoNotificationsShown.current) return;
+      demoNotificationsShown.current = true;
+      DEMO_INCIDENTS.forEach(incident => {
+        const detection = isAlcoholResult(incident.type) ? "ALCOHOL" : "NARCOTIC";
+        const resolution = incident.status === "RESOLVED" ? " // RESOLVED" : "";
+        addToast(
+          `${detection} DETECTED${resolution} — ${displayDeviceId(incident.device)} / ${cityLocationForDevice(incident.device, incident.location)} — ${truncateConfidencePercent(incident.confidence)}%`,
+          "alert",
+          incident.type,
+        );
+      });
+    }} />;
   }
 
-  const activeAlertCount = incidents.filter(incident => incident.status !== "RESOLVED" && incident.type !== "ALCOHOL").length;
-  const activeThreatIncident = incidents.find(incident => incident.status !== "RESOLVED" && incident.type !== "ALCOHOL");
+  const activeAlertCount = incidents.filter(incident => incident.status !== "RESOLVED").length;
+  const activeThreatIncident = incidents.find(incident => incident.status !== "RESOLVED" && isNarcoticResult(incident.type))
+    ?? incidents.find(incident => incident.status !== "RESOLVED");
   const displaySummary = { ...summary, activeAlerts: activeAlertCount };
 
   return (
@@ -125,10 +156,10 @@ export default function App() {
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Topbar */}
-        <div className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 py-2.5 border-b bg-charcoal border-warm-grey/10">
+        <div className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 py-2.5 border-b bg-charcoal border-border">
           <div className="flex items-center gap-3 md:pl-0 pl-12">
             <div className="font-mono text-[9.5px] tracking-[.18em] uppercase text-warm-grey">
-              <span className="text-brass">SENTRY</span> // CONTROL CENTER // NEW DELHI JN
+              <span className="text-brass">DART</span> // CITY CONTROL // NEW DELHI
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -161,7 +192,7 @@ export default function App() {
           {screen==="anomalies"&&(
             <AnomalyAlert theme="dark"
               incident={activeThreatIncident}
-              onAcknowledge={async id=>{ await handleAcknowledge(id); addToast("Issue recognised — RAIL_ADM_001","success","SAFE"); }}
+              onAcknowledge={async id=>{ await handleAcknowledge(id); addToast("Issue recognised — DART_OPS_001","success","SAFE"); }}
               onResolved={async id=>{ await handleResolve(id); addToast("Incident resolved — moved to Threat History","success","SAFE"); setScreen("threat-history"); }}/>
           )}
           {screen==="threat-history"&&<ThreatHistory theme="dark" incidents={incidents} alertEvents={alertEvents}/>} 

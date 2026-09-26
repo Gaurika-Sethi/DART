@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, Battery, Signal, MapPin } from "lucide-react";
 import { getDevicePredictions } from "../api";
-import { truncateConfidencePercent, type Device, type PredictionResult } from "../data";
+import { cityLocationForDevice, displayDeviceId, isVisibleDetection, truncateConfidencePercent, type Device, type PredictionResult } from "../data";
 import ThreatIcon from "../components/ThreatIcon";
 
 interface Props { deviceId: string; theme: "dark" | "light"; devices: Device[]; onBack: () => void; onLiveTracking: () => void; }
 
 const RC: Record<string, string> = {
-  "EXPLOSIVE PROXY": "#B3262E",
-  "NARCOTIC PROXY":  "#B3262E",
-  "ALCOHOL":         "#D99A27",
+  "NARCOTIC PROXY":  "#E05252",
+  "NARCOTIC":        "#E05252",
+  "ALCOHOL":         "#E05252",
+  "ALCOHOL PROXY":   "#E05252",
 };
 
 function displayResult(result: string) {
@@ -32,13 +33,15 @@ export default function DeviceInfo({ deviceId, theme, devices, onBack, onLiveTra
     return () => { active = false; window.clearInterval(interval); };
   }, [device?.id]);
 
-  const anomalies = livePredictions.map(item => ({ timestamp: item.timestamp, result: item.displayResult || item.prediction || "SAFE", confidence: item.confidence * 100 }));
+  const anomalies = livePredictions
+    .map(item => ({ timestamp: item.timestamp, result: item.displayResult || item.prediction || "SAFE", confidence: item.confidence * 100 }))
+    .filter(item => isVisibleDetection(item.result) || item.result === "SAFE" || item.result === "CAUTION" || item.result === "WEATHER");
 
-  const bg   = dark ? "bg-obsidian"   : "bg-[#F1EDE3]";
+  const bg   = dark ? "bg-obsidian"   : "bg-[#F5F5F5]";
   const cBg  = dark ? "bg-gunmetal"   : "bg-white";
   const text = dark ? "text-ivory"    : "text-obsidian";
-  const muted= dark ? "text-warm-grey": "text-[#6F6A61]";
-  const bdr  = dark ? "border-warm-grey/10" : "border-obsidian/8";
+  const muted= dark ? "text-warm-grey": "text-[#8C9199]";
+  const bdr  = dark ? "border-border" : "border-border";
 
   if (!device) {
     return (
@@ -50,11 +53,11 @@ export default function DeviceInfo({ deviceId, theme, devices, onBack, onLiveTra
     );
   }
 
-  const sc = device.lastResult === "ALCOHOL"
-    ? "#D99A27"
-    : { ONLINE: "#20C878", OFFLINE: "#A8A39A", ALERT: "#B3262E", WARNING: "#D99A27" }[device.status];
-  const shownStatus = device.lastResult === "ALCOHOL" ? "WARNING" : device.status;
-  const battColor = device.battery > 50 ? "#20C878" : device.battery > 20 ? "#D99A27" : "#B3262E";
+  const sc = isVisibleDetection(device.lastResult)
+    ? "#E05252"
+    : { ONLINE: "#3FB950", OFFLINE: "#8C9199", ALERT: "#E05252", WARNING: "#F4B942" }[device.status];
+  const shownStatus = isVisibleDetection(device.lastResult) ? "ALERT" : device.status;
+  const battColor = device.battery > 50 ? "#3FB950" : device.battery > 20 ? "#F4B942" : "#E05252";
 
   return (
     <div className={`min-h-full ${bg}`}>
@@ -76,10 +79,10 @@ export default function DeviceInfo({ deviceId, theme, devices, onBack, onLiveTra
               <div className="flex flex-wrap items-start gap-3 mb-4">
                 <div>
                   <div className={`font-display text-[44px] md:text-[52px] tracking-widest leading-none ${text}`}>
-                    {device.id}
+                    {displayDeviceId(device.id)}
                   </div>
                   <div className={`font-mono text-[9px] tracking-widest ${muted} mt-1`}>
-                    SENTRY DETECTION UNIT
+                    DART DETECTION UNIT
                   </div>
                 </div>
                 <span className="font-mono text-[8.5px] tracking-widest px-2 py-1 inline-flex items-center gap-1.5 mt-1"
@@ -92,14 +95,14 @@ export default function DeviceInfo({ deviceId, theme, devices, onBack, onLiveTra
               <div className="flex items-center gap-2 mb-6">
                 <MapPin className="w-3.5 h-3.5 text-brass" />
                 <span className="font-mono text-[10px] tracking-widest text-brass">
-                  {device.platform} // {device.location}
+                  {cityLocationForDevice(device.id, device.location)}
                 </span>
               </div>
 
               {/* Device Status + Battery — only these two */}
               <div className="grid grid-cols-2 gap-3">
                 {/* Device Status */}
-                <div className={`p-4 ${dark ? "bg-charcoal" : "bg-[#F4F0E8]"}`}>
+                <div className={`p-4 ${dark ? "bg-charcoal" : "bg-[#15171A]"}`}>
                   <div className="flex items-center gap-1.5 mb-2">
                     <Signal className="w-3.5 h-3.5 flex-shrink-0" style={{ color: sc }} />
                     <span className={`font-mono text-[8px] tracking-widest uppercase ${muted}`}>DEVICE STATUS</span>
@@ -110,16 +113,16 @@ export default function DeviceInfo({ deviceId, theme, devices, onBack, onLiveTra
                 </div>
 
                 {/* Battery */}
-                <div className={`p-4 ${dark ? "bg-charcoal" : "bg-[#F4F0E8]"}`}>
+                <div className={`p-4 ${dark ? "bg-charcoal" : "bg-[#15171A]"}`}>
                   <div className="flex items-center gap-1.5 mb-2">
                     <Battery className="w-3.5 h-3.5 flex-shrink-0" style={{ color: battColor }} />
                     <span className={`font-mono text-[8px] tracking-widest uppercase ${muted}`}>BATTERY</span>
                   </div>
-                  <div className="font-mono text-[16px] font-medium" style={{ color: device.battery > 0 ? battColor : "#A8A39A" }}>
+                  <div className="font-mono text-[16px] font-medium" style={{ color: device.battery > 0 ? battColor : "#8C9199" }}>
                     {device.battery > 0 ? `${device.battery}%` : "—"}
                   </div>
                   {device.battery > 0 && (
-                    <div className={`mt-2 h-1 w-full ${dark ? "bg-obsidian" : "bg-[#E4E0D7]"}`}>
+                    <div className={`mt-2 h-1 w-full ${dark ? "bg-obsidian" : "bg-[#15171A]"}`}>
                       <div className="h-full transition-all" style={{ width: `${device.battery}%`, background: battColor }} />
                     </div>
                   )}
@@ -146,7 +149,7 @@ export default function DeviceInfo({ deviceId, theme, devices, onBack, onLiveTra
                 </thead>
                 <tbody>
                   {anomalies.slice(0, 5).map((a, i) => {
-                    const c = RC[a.result] || "#B3262E";
+                    const c = RC[a.result] || "#E05252";
                     return (
                       <tr key={i} className={`border-b ${bdr} last:border-0`}>
                         <td className="py-2.5 font-mono text-[9.5px] text-brass whitespace-nowrap">{a.timestamp}</td>

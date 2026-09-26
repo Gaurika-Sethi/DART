@@ -24,7 +24,7 @@ function SidebarInner({ active, onNav, alertCount }: Omit<Props,"mobileOpen"|"on
   const bg = "bg-charcoal";
   const text = "text-ivory";
   const muted = "text-warm-grey";
-  const bdr = "border-warm-grey/10";
+  const bdr = "border-border";
 
   const isActive=(id:string)=> active===id||(id==="devices"&&active==="device-info");
 
@@ -37,7 +37,7 @@ function SidebarInner({ active, onNav, alertCount }: Omit<Props,"mobileOpen"|"on
             <Shield className="w-4 h-4 text-ivory"/>
           </div>
           <div>
-            <div className={`font-display text-[22px] tracking-widest leading-none ${text}`}>SENTRY</div>
+            <div className={`font-display text-[22px] tracking-widest leading-none ${text}`}>DART</div>
             <div className={`font-mono text-[7.5px] tracking-[.15em] uppercase ${muted} mt-0.5`}>CONTROL CENTER</div>
           </div>
         </div>
@@ -70,8 +70,8 @@ function SidebarInner({ active, onNav, alertCount }: Omit<Props,"mobileOpen"|"on
       {/* User */}
       <div className={`px-4 py-2.5 border-t ${bdr} bg-obsidian/40`}>
         <div className={`font-mono text-[8px] tracking-widest uppercase ${muted} mb-0.5`}>USER</div>
-        <div className={`font-heading text-[11px] tracking-widest font-semibold ${text}`}>RAIL_ADM_001</div>
-        <div className={`font-mono text-[8px] tracking-widest ${muted}`}>Security Div // NR-NDLS</div>
+        <div className={`font-heading text-[11px] tracking-widest font-semibold ${text}`}>DART_OPS_001</div>
+        <div className={`font-mono text-[8px] tracking-widest ${muted}`}>New Delhi City Unit</div>
       </div>
 
     </div>
@@ -104,7 +104,7 @@ export default function Sidebar(props: Props) {
       )}
 
       {/* Mobile bottom nav */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex border-t bg-charcoal border-warm-grey/10">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex border-t bg-charcoal border-border">
         {[
           {id:"dashboard",icon:LayoutDashboard,label:"HOME"},
           {id:"live-tracking",icon:MapPin,label:"LIVE"},

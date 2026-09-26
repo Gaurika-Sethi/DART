@@ -1,5 +1,6 @@
 {
-  "description": "Enhance railway security with real-time monitoring and intelligence from connected detection devices, ensuring safe travel across Indian railway networks.",
+  "title": "DART",
+  "description": "DART provides real-time citywide alcohol and narcotics detection across New Delhi.",
   "robots": {
     "index": false
   },

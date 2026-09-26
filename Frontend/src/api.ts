@@ -4,7 +4,7 @@ const API_BASE = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").repla
 
 async function get<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`);
-  if (!response.ok) throw new Error(`SENTRY API ${response.status}`);
+  if (!response.ok) throw new Error(`DART API ${response.status}`);
   return response.json() as Promise<T>;
 }
 
@@ -46,16 +46,16 @@ export async function acknowledgeIncident(id: string) {
   const response = await fetch(`${API_BASE}/api/v1/incidents/${encodeURIComponent(id)}/acknowledge`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ operator_id: "RAIL_ADM_001" }),
+    body: JSON.stringify({ operator_id: "DART_OPS_001" }),
   });
-  if (!response.ok) throw new Error(`SENTRY API ${response.status}`);
+  if (!response.ok) throw new Error(`DART API ${response.status}`);
 }
 
 export async function resolveIncident(id: string) {
   const response = await fetch(`${API_BASE}/api/v1/incidents/${encodeURIComponent(id)}/resolve`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ operator_id: "RAIL_ADM_001" }),
+    body: JSON.stringify({ operator_id: "DART_OPS_001" }),
   });
-  if (!response.ok) throw new Error(`SENTRY API ${response.status}`);
+  if (!response.ok) throw new Error(`DART API ${response.status}`);
 }
