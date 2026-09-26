@@ -174,6 +174,6 @@ export function truncateConfidencePercent(value: number): string {
 export const DETECTION_DIST = [
   { name:"SAFE",           value:847, color:"#3FB950" },
   { name:"CAUTION",        value:43,  color:"#F4B942" },
-  { name:"ALCOHOL PROXY",  value:18,  color:"#E05252" },
-  { name:"NARCOTIC PROXY", value:12,  color:"#E05252" },
+  { name:"ALCOHOL PROXY",  value:18,  color:"#bf0505" },
+  { name:"NARCOTIC PROXY", value:12,  color:"#bf0505" },
 ];

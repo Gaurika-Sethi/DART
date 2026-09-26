@@ -33,7 +33,7 @@ function SidebarInner({ active, onNav, alertCount }: Omit<Props,"mobileOpen"|"on
       {/* Logo */}
       <div className="px-4 pt-5 pb-4">
         <div className="flex items-center gap-2.5 mb-0.5">
-          <div className="w-8 h-8 bg-signal-red flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 bg-brass flex items-center justify-center flex-shrink-0">
             <Shield className="w-4 h-4 text-ivory"/>
           </div>
           <div>
@@ -41,7 +41,7 @@ function SidebarInner({ active, onNav, alertCount }: Omit<Props,"mobileOpen"|"on
             <div className={`font-mono text-[7.5px] tracking-[.15em] uppercase ${muted} mt-0.5`}>CONTROL CENTER</div>
           </div>
         </div>
-        <div className="h-[1px] bg-signal-red/40 mt-3.5"/>
+        <div className="h-[1px] bg-brass/40 mt-3.5"/>
       </div>
 
       {/* Nav */}
@@ -54,14 +54,14 @@ function SidebarInner({ active, onNav, alertCount }: Omit<Props,"mobileOpen"|"on
             <button key={item.id} onClick={()=>onNav(item.id as Screen)}
               className={`w-full flex items-center gap-2.5 px-2.5 py-2.5 text-left transition-all group relative border-l-2 ${
                 act
-                  ? "bg-gunmetal border-l-signal-red"
+                  ? "bg-gunmetal border-l-brass"
                   : "hover:bg-gunmetal/50 border-l-transparent"
               }`}>
-              <span className={`font-mono text-[8px] tracking-widest flex-shrink-0 ${act?"text-signal-red":muted}`}>{item.n}</span>
-              <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${act?"text-signal-red":muted} transition-colors`}/>
+              <span className={`font-mono text-[8px] tracking-widest flex-shrink-0 ${act?"text-brass":muted}`}>{item.n}</span>
+              <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${act?"text-brass":muted} transition-colors`}/>
               <span className={`font-heading text-[11px] tracking-[.12em] font-medium flex-1 ${act?text:muted} transition-colors`}>{item.label}</span>
               {isAlert&&<span className="w-2 h-2 rounded-full bg-signal-red blink flex-shrink-0"/>}
-              {act&&<ChevronRight className="w-3 h-3 text-signal-red flex-shrink-0"/>}
+              {act&&<ChevronRight className="w-3 h-3 text-brass flex-shrink-0"/>}
             </button>
           );
         })}
@@ -89,7 +89,7 @@ export default function Sidebar(props: Props) {
       </div>
 
       {/* Mobile hamburger */}
-      <button className="md:hidden fixed top-3.5 left-3.5 z-50 w-9 h-9 bg-signal-red flex items-center justify-center" onClick={onMobileToggle}>
+      <button className="md:hidden fixed top-3.5 left-3.5 z-50 w-9 h-9 bg-brass flex items-center justify-center" onClick={onMobileToggle}>
         {mobileOpen ? <X className="w-4 h-4 text-ivory"/> : <Menu className="w-4 h-4 text-ivory"/>}
       </button>
 
@@ -117,8 +117,8 @@ export default function Sidebar(props: Props) {
           const isAlert=item.id==="anomalies"&&props.alertCount>0;
           return (
             <button key={item.id} onClick={()=>props.onNav(item.id as Screen)}
-              className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 relative transition-colors ${act?"text-signal-red":"text-warm-grey"}`}>
-              {act&&<div className="absolute top-0 left-0 right-0 h-[2px] bg-signal-red"/>}
+              className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 relative transition-colors ${act?"text-brass":"text-warm-grey"}`}>
+              {act&&<div className="absolute top-0 left-0 right-0 h-[2px] bg-brass"/>}
               <Icon className="w-4 h-4"/>
               <span className="font-mono text-[7px] tracking-widest">{item.label}</span>
               {isAlert&&<span className="absolute top-1.5 right-1/2 translate-x-3 w-1.5 h-1.5 rounded-full bg-signal-red blink"/>}

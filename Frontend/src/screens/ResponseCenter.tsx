@@ -12,7 +12,7 @@ const STATUS_MAP: Record<string, IncStatus> = {
 };
 
 const STATUS_COLOR: Record<IncStatus, string> = {
-  LIVE:       "#E05252",
+  LIVE:       "#E81A1A",
   RECOGNISED: "#F4B942",
   RESOLVED:   "#3FB950",
 };
@@ -104,7 +104,7 @@ export default function ThreatHistory({ theme, incidents, alertEvents }: { theme
                       <span className="font-mono text-[8.5px] px-2 py-1" style={{ background: `${tc(event.display_result)}20`, color: tc(event.display_result), border: `1px solid ${tc(event.display_result)}40` }}>
                         {event.display_result}
                       </span>
-                      <span className="font-mono text-[8px] tracking-widest uppercase" style={{ color: event.resolved_at ? "#3FB950" : "#E05252" }}>
+                      <span className="font-mono text-[8px] tracking-widest uppercase" style={{ color: event.resolved_at ? "#3FB950" : "#F4B942" }}>
                         {event.resolved_at ? "RESOLVED" : "ACTIVE"}
                       </span>
                     </div>

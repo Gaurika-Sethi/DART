@@ -5,8 +5,8 @@ import ThreatIcon from "../components/ThreatIcon";
 import CityMap from "../components/CityMap";
 
 /* ── helpers ── */
-const STATUS_COLOR: Record<string,string> = { ONLINE:"#3FB950", OFFLINE:"#8C9199", ALERT:"#E05252", WARNING:"#F4B942" };
-const RESULT_COLOR: Record<string,string> = { "SAFE":"#3FB950","CAUTION":"#F4B942","ALCOHOL":"#E05252","ALCOHOL PROXY":"#E05252","NARCOTIC":"#E05252","NARCOTIC PROXY":"#E05252" };
+const STATUS_COLOR: Record<string,string> = { ONLINE:"#3FB950", OFFLINE:"#8C9199", ALERT:"#e81a1a", WARNING:"#F4B942" };
+const RESULT_COLOR: Record<string,string> = { "SAFE":"#3FB950","CAUTION":"#F4B942","ALCOHOL":"#E81a1a","ALCOHOL PROXY":"#E81a1a","NARCOTIC":"#E81A1A","NARCOTIC PROXY":"#E81A1A" };
 const DETECTION_KEYWORDS = ["safe", "caution", "weather", "alcohol", "sanitizer", "narcotic"];
 
 function displayEvent(event: string) {
@@ -44,7 +44,7 @@ function MetricCard({ label, value, desc, badge, badgeColor, trend, dark }:{
 }) {
   return (
     <div className={`relative overflow-hidden p-4 panel ${dark?"bg-gunmetal":"bg-white panel-light"}`}>
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-signal-red/30"/>
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-brass/30"/>
       <div className={`font-mono text-[8.5px] tracking-[.22em] uppercase mb-3 ${dark?"text-warm-grey":"text-[#8C9199]"}`}>{label}</div>
       <div className={`font-display text-[42px] leading-none mb-1 ${dark?"text-ivory":"text-obsidian"}`}>{value}</div>
       <div className={`font-mono text-[9px] tracking-widest ${dark?"text-warm-grey":"text-[#8C9199]"}`}>{desc}</div>
@@ -141,7 +141,7 @@ function StationMap({ dark, devices, onDevice }:{ dark:boolean; devices:Device[]
 
       {/* Legend */}
       <div className={`absolute bottom-3 right-3 p-2.5 ${dark?"bg-charcoal/90":"bg-white/90"} border ${dark?"border-border":"border-border"}`}>
-        {[["ONLINE","#3FB950"],["ALERT","#E05252"],["WARNING","#F4B942"]].map(([l,c])=>(
+        {[["ONLINE","#3FB950"],["ALERT","#F4B942"],["WARNING","#F4B942"]].map(([l,c])=>(
             <div key={l} className="flex items-center gap-1.5 mb-1 last:mb-0">
             <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background:c}}/>
             <span className="font-mono text-[8px] tracking-widest" style={{color:c}}>{l}</span>
@@ -275,10 +275,10 @@ export default function Dashboard({ theme, devices, incidents, logs, summary, on
           <MetricCard label="CONNECTED DEVICES" value={summary.connectedDevices} desc="Total registered" dark={dark}/>
           <MetricCard label="ONLINE" value={summary.online} desc="Active right now" badge={summary.connectedDevices?`${Math.round(summary.online/summary.connectedDevices*100)}%`:"0%"} badgeColor="#3FB950" dark={dark}/>
           <MetricCard label="OFFLINE" value={summary.offline} desc="No heartbeat" badge={summary.offline?"ATTENTION":"CLEAR"} badgeColor="#8C9199" trend={summary.offline?"up":"flat"} dark={dark}/>
-          <MetricCard label="ACTIVE ALERTS" value={String(summary.activeAlerts).padStart(2,"0")} desc="Require attention" badge={summary.activeAlerts?"CRITICAL":"CLEAR"} badgeColor="#E05252" trend={summary.activeAlerts?"up":"flat"} dark={dark}/>
+          <MetricCard label="ACTIVE ALERTS" value={String(summary.activeAlerts).padStart(2,"0")} desc="Require attention" badge={summary.activeAlerts?"CRITICAL":"CLEAR"} badgeColor="#F4B942" trend={summary.activeAlerts?"up":"flat"} dark={dark}/>
         </div>
         <div className={`panel ${cBg}`}>
-          <div className="h-[2px] bg-signal-red/25"/>
+          <div className="h-[2px] bg-brass/25"/>
           <div className={`px-4 py-3 flex items-center justify-between border-b ${bdr}`}>
             <div>
               <div className={`font-heading text-[12px] tracking-[.14em] font-semibold uppercase ${text}`}>DART CITY DETECTORS</div>
@@ -296,7 +296,7 @@ export default function Dashboard({ theme, devices, incidents, logs, summary, on
               {devices.map(d=>(
                 <button key={d.id} onClick={()=>isVisibleDetection(d.lastResult)?onViewAnomaly():onViewDevice(d.id)}
                   className={`flex items-center gap-2 px-3 py-1.5 border ${bdr} ${dark?"hover:bg-charcoal":"hover:bg-[#15171A]"} transition-colors`}>
-                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background:isVisibleDetection(d.lastResult)?"#E05252":STATUS_COLOR[d.status]}}/>
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background:isVisibleDetection(d.lastResult)?"#F4B942":STATUS_COLOR[d.status]}}/>
                   <span className={`font-mono text-[9px] tracking-widest ${text}`}>{displayDeviceId(d.id)}</span>
                   <span className={`font-mono text-[8px] ${muted}`}>{cityLocationForDevice(d.id,d.location)}</span>
                 </button>
@@ -340,7 +340,7 @@ export default function Dashboard({ theme, devices, incidents, logs, summary, on
             <div className="flex gap-1 flex-wrap">
               {LOG_FILTERS.map(f=>(
                 <button key={f} onClick={()=>setLogFilter(f)}
-                  className={`font-mono text-[8.5px] tracking-widest px-2 py-1 border transition-all ${logFilter===f?"bg-signal-red text-ivory border-signal-red":`${bdr} ${muted} hover:border-brass`}`}>
+                  className={`font-mono text-[8.5px] tracking-widest px-2 py-1 border transition-all ${logFilter===f?"bg-brass text-obsidian border-brass":`${bdr} ${muted} hover:border-brass`}`}>
                   {f}
                 </button>
               ))}

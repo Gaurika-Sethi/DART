@@ -27,14 +27,14 @@ export default function Login({ onLogin }: Props) {
           <path d="M440 337 V430 L525 495" stroke="#F4B942" strokeWidth="2"/>
           <circle cx="300" cy="180" r="13" stroke="#3FB950" strokeWidth="2.5"/>
           <circle cx="560" cy="300" r="13" stroke="#F4B942" strokeWidth="2.5"/>
-          <circle cx="520" cy="475" r="16" stroke="#E05252" strokeWidth="3"/>
+          <circle cx="520" cy="475" r="16" stroke="#F4B942" strokeWidth="3"/>
           <text x="440" y="280" textAnchor="middle" fontSize="12" fill="#F4B942" fontFamily="monospace" letterSpacing="2">DART</text>
         </svg>
 
         {/* Logo */}
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-1">
-            <div className="w-9 h-9 bg-signal-red flex items-center justify-center flex-shrink-0">
+            <div className="w-9 h-9 bg-brass flex items-center justify-center flex-shrink-0">
               <Shield className="w-5 h-5 text-ivory"/>
             </div>
             <div>
@@ -42,13 +42,13 @@ export default function Login({ onLogin }: Props) {
               <div className="font-mono text-[8.5px] text-warm-grey tracking-[.18em] uppercase leading-tight mt-0.5">CITYWIDE ALCOHOL & NARCOTICS DETECTION</div>
             </div>
           </div>
-          <div className="h-[1px] bg-signal-red w-28 mt-4"/>
+          <div className="h-[1px] bg-brass w-28 mt-4"/>
         </div>
 
         {/* Headline */}
         <div className="relative z-10">
           <div className="font-display text-[56px] md:text-[72px] text-ivory leading-[.92] tracking-wide mb-6">
-            SECURE THE<br/><span className="text-signal-red">CITY.</span><br/>DETECT THE<br/>UNSEEN.
+            SECURE THE<br/><span className="text-brass">CITY.</span><br/>DETECT THE<br/>UNSEEN.
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export default function Login({ onLogin }: Props) {
       {/* ─── RIGHT PANEL ─── */}
       <div className="w-full md:w-[420px] flex flex-col justify-center p-8 md:p-12 relative bg-charcoal">
         {/* thin red top bar */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-signal-red"/>
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-brass"/>
 
         <div className="max-w-sm w-full mx-auto">
           <div className="mb-8">
@@ -89,7 +89,7 @@ export default function Login({ onLogin }: Props) {
             {/* Remember */}
             <div className="flex items-center gap-3">
               <div onClick={()=>setRemember(!remember)}
-                className={`w-4 h-4 border cursor-pointer flex items-center justify-center flex-shrink-0 transition-all ${remember?"bg-signal-red border-signal-red":"border-border"}`}>
+                className={`w-4 h-4 border cursor-pointer flex items-center justify-center flex-shrink-0 transition-all ${remember?"bg-brass border-brass":"border-border"}`}>
                 {remember && <div className="w-2 h-1.5 bg-ivory"/>}
               </div>
               <span onClick={()=>setRemember(!remember)}

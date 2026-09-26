@@ -64,7 +64,7 @@ export default function CityMap({ devices, onDevice, selectedId, className = "",
         const point = cityMapPoint(device);
         const location = cityLocationForDevice(device.id, device.location);
         const detection = isVisibleDetection(device.lastResult);
-        const markerColor = detection ? "#E05252" : device.status === "ONLINE" ? "#3FB950" : "#8C9199";
+            const markerColor = detection ? "#E05252" : device.status === "ONLINE" ? "#3FB950" : "#8C9199";
         const Marker = onDevice ? "button" : "div";
         return (
           <Marker key={device.id} {...(onDevice ? { type: "button", onClick: () => onDevice(device) } : {})}
@@ -83,7 +83,7 @@ export default function CityMap({ devices, onDevice, selectedId, className = "",
         );
       })}
       {!selectedId && <div className="absolute bottom-3 right-3 border border-border bg-charcoal/95 p-2.5">
-        {[["ONLINE", "#3FB950"], ["DETECTION", "#E05252"], ["OFFLINE", "#8C9199"]].map(([label, color]) => (
+            {[["ONLINE", "#3FB950"], ["DETECTION", "#E05252"], ["OFFLINE", "#8C9199"]].map(([label, color]) => (
           <div key={label} className="mb-1 flex items-center gap-1.5 last:mb-0">
             <span className="h-2 w-2 rounded-full" style={{ background: color }} />
             <span className="font-mono text-[8px] tracking-widest" style={{ color }}>{label}</span>

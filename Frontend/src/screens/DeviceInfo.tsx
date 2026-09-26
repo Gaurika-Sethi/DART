@@ -7,10 +7,10 @@ import ThreatIcon from "../components/ThreatIcon";
 interface Props { deviceId: string; theme: "dark" | "light"; devices: Device[]; onBack: () => void; onLiveTracking: () => void; }
 
 const RC: Record<string, string> = {
-  "NARCOTIC PROXY":  "#E05252",
-  "NARCOTIC":        "#E05252",
-  "ALCOHOL":         "#E05252",
-  "ALCOHOL PROXY":   "#E05252",
+  "NARCOTIC PROXY":  "#F4B942",
+  "NARCOTIC":        "#F4B942",
+  "ALCOHOL":         "#F4B942",
+  "ALCOHOL PROXY":   "#F4B942",
 };
 
 function displayResult(result: string) {
@@ -54,10 +54,10 @@ export default function DeviceInfo({ deviceId, theme, devices, onBack, onLiveTra
   }
 
   const sc = isVisibleDetection(device.lastResult)
-    ? "#E05252"
-    : { ONLINE: "#3FB950", OFFLINE: "#8C9199", ALERT: "#E05252", WARNING: "#F4B942" }[device.status];
+    ? "#F4B942"
+    : { ONLINE: "#3FB950", OFFLINE: "#8C9199", ALERT: "#F4B942", WARNING: "#F4B942" }[device.status];
   const shownStatus = isVisibleDetection(device.lastResult) ? "ALERT" : device.status;
-  const battColor = device.battery > 50 ? "#3FB950" : device.battery > 20 ? "#F4B942" : "#E05252";
+  const battColor = device.battery > 50 ? "#3FB950" : device.battery > 20 ? "#F4B942" : "#F4B942";
 
   return (
     <div className={`min-h-full ${bg}`}>
@@ -149,7 +149,7 @@ export default function DeviceInfo({ deviceId, theme, devices, onBack, onLiveTra
                 </thead>
                 <tbody>
                   {anomalies.slice(0, 5).map((a, i) => {
-                    const c = RC[a.result] || "#E05252";
+                    const c = RC[a.result] || "#F4B942";
                     return (
                       <tr key={i} className={`border-b ${bdr} last:border-0`}>
                         <td className="py-2.5 font-mono text-[9.5px] text-brass whitespace-nowrap">{a.timestamp}</td>

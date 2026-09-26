@@ -84,8 +84,8 @@ html, body, #root {
   transition: background .15s;
   font-size: 12px;
 }
-.btn-primary:hover  { background: #D98E04; }
-.btn-primary:active { background: #B97700; }
+.btn-primary:hover  { background: var(--color-brass-dim); }
+.btn-primary:active { background: var(--color-brass-dim); }
 
 .btn-ghost {
   background: transparent;

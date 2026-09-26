@@ -6,10 +6,10 @@ import ThreatIcon from "../components/ThreatIcon";
 import CityMap from "../components/CityMap";
 
 const RESULT_COLOR: Record<string, string> = {
-  "ALCOHOL": "#E05252",
-  "ALCOHOL PROXY": "#E05252",
-  "NARCOTIC": "#E05252",
-  "NARCOTIC PROXY": "#E05252",
+  "ALCOHOL": "#F4B942",
+  "ALCOHOL PROXY": "#F4B942",
+  "NARCOTIC": "#F4B942",
+  "NARCOTIC PROXY": "#F4B942",
 };
 
 function displayResult(result: string) {
@@ -41,7 +41,7 @@ export default function LiveTracking({ theme, devices }: { theme: "dark" | "ligh
   const lastAnomaly = liveAnomaly
     ? { timestamp: liveAnomaly.timestamp, result: displayResult(liveAnomaly.displayResult || liveAnomaly.prediction || ""), confidence: liveAnomaly.confidence * 100 }
     : null;
-  const anomalyColor = lastAnomaly ? RESULT_COLOR[lastAnomaly.result] || "#E05252" : "#8C9199";
+  const anomalyColor = lastAnomaly ? RESULT_COLOR[lastAnomaly.result] || "#F4B942" : "#8C9199";
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -92,7 +92,7 @@ export default function LiveTracking({ theme, devices }: { theme: "dark" | "ligh
             {drop && (
               <div className={`absolute top-full right-0 mt-0.5 z-30 min-w-full border ${bdr} ${cBg} shadow-xl`}>
                 {devices.map(d => {
-                  const c = { ONLINE: "#3FB950", OFFLINE: "#8C9199", ALERT: "#E05252", WARNING: "#F4B942" }[d.status];
+                  const c = { ONLINE: "#3FB950", OFFLINE: "#8C9199", ALERT: "#F4B942", WARNING: "#F4B942" }[d.status];
                   return (
                     <button key={d.id} onClick={() => { setSelId(d.id); setDrop(false); }}
                       className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors
@@ -149,8 +149,8 @@ export default function LiveTracking({ theme, devices }: { theme: "dark" | "ligh
                 style={{ left: `${device.mapX}%`, top: `${device.mapY}%` }}>
                 <div className="relative">
                   <div className="w-4 h-4 rounded-full border-2 border-ivory z-10 relative"
-                    style={{ background: "#E05252", boxShadow: "0 0 10px #E0525280" }} />
-                  <div className="absolute inset-0 rounded-full pulse-red" style={{ background: "#E05252" }} />
+                    style={{ background: "#F4B942", boxShadow: "0 0 10px #F4B94280" }} />
+                  <div className="absolute inset-0 rounded-full pulse-red" style={{ background: "#F4B942" }} />
                 </div>
                 {/* Label */}
                 <div className={`absolute left-5 top-0 whitespace-nowrap ${dark ? "bg-gunmetal" : "bg-white"} border border-border px-2 py-1`}>
@@ -163,7 +163,7 @@ export default function LiveTracking({ theme, devices }: { theme: "dark" | "ligh
               <div className={`absolute bottom-3 left-3 px-3 py-2 ${dark ? "bg-charcoal/90" : "bg-white/90"} border ${bdr}`}>
                 <div className={`font-mono text-[7.5px] tracking-widest uppercase ${muted} mb-1`}>BATTERY</div>
                 <div className="font-mono text-[18px] leading-none font-medium"
-                  style={{ color: device.battery > 50 ? "#3FB950" : device.battery > 20 ? "#F4B942" : "#E05252" }}>
+                  style={{ color: device.battery > 50 ? "#3FB950" : device.battery > 20 ? "#F4B942" : "#F4B942" }}>
                   {device.battery > 0 ? `${device.battery}%` : "—"}
                 </div>
               </div>

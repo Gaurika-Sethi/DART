@@ -104,58 +104,12 @@ export default function AnomalyAlert({ theme, incident, onAcknowledge, onResolve
                 </div>
               </div>
 
-              {/* Mini map */}
-              <div className="w-full md:w-64 h-48 relative overflow-hidden border border-signal-red/30 flex-shrink-0">
-                <CityMap devices={DEMO_DEVICES} selectedId={activeIncident.device} className="absolute inset-0" />
-                <div className="absolute bottom-2 left-2 font-mono text-[7.5px] text-signal-red tracking-widest">ALERT LOCATION</div>
-                <div className="hidden">
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 200" preserveAspectRatio="xMidYMid meet">
-                  <rect x="10" y="8"   width="280" height="184" fill="none" stroke="#F4B942" strokeWidth=".5" strokeOpacity=".15" />
-                  <rect x="30" y="25"  width="240" height="32"  fill="none" stroke="#F4B942" strokeWidth=".6" strokeOpacity=".2" />
-                  <line x1="30" y1="34" x2="270" y2="34" stroke="#F4B942" strokeWidth="1.2" strokeOpacity=".25" />
-                  <line x1="30" y1="47" x2="270" y2="47" stroke="#F4B942" strokeWidth="1.2" strokeOpacity=".25" />
-                  <text x="150" y="32" textAnchor="middle" fontSize="6" fill="#F4B942" fillOpacity=".5" fontFamily="JetBrains Mono,monospace">PLATFORM 3</text>
-                  <rect x="30" y="80"  width="240" height="32"  fill="none" stroke="#F4B942" strokeWidth=".6" strokeOpacity=".2" />
-                  <line x1="30" y1="89"  x2="270" y2="89"  stroke="#F4B942" strokeWidth="1.2" strokeOpacity=".25" />
-                  <line x1="30" y1="102" x2="270" y2="102" stroke="#F4B942" strokeWidth="1.2" strokeOpacity=".25" />
-                  <text x="150" y="87" textAnchor="middle" fontSize="6" fill="#F4B942" fillOpacity=".5" fontFamily="JetBrains Mono,monospace">PLATFORM 5</text>
-                  <rect x="10" y="82"  width="28"  height="48"  fill="none" stroke="#E05252" strokeWidth=".8" strokeOpacity=".5" />
-                  <text x="24" y="98"  textAnchor="middle" fontSize="5.5" fill="#E05252" fillOpacity=".8" fontFamily="JetBrains Mono,monospace">GATE</text>
-                  <text x="24" y="107" textAnchor="middle" fontSize="5.5" fill="#E05252" fillOpacity=".8" fontFamily="JetBrains Mono,monospace">2</text>
-                </svg>
-                <div className="absolute" style={{ left: "11%", top: "67%", transform: "translate(-50%,-50%)" }}>
-                  <div className="w-5 h-5 rounded-full bg-signal-red border-2 border-ivory pulse-red" />
-                </div>
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>
 
-        {/* Detection details — full width, no response routing */}
-        <div className={`panel ${cBg}`}>
-          <div className="h-[2px] bg-signal-red" />
-          <div className="p-4">
-            <div className="font-mono text-[9px] tracking-[.2em] uppercase text-brass mb-4">DETECTION DETAILS</div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
-              {[
-                { l: "DETECTION TYPE",  v: activeIncident.type,    c: "#E05252" },
-                { l: "DEVICE STATUS",   v: "ACTIVE",             c: "#3FB950" },
-                { l: "LOCATION STATUS", v: "RESPONSE REQUIRED",  c: "#E05252" },
-                { l: "MQ-135 READING",  v: activeIncident.latestReading ? `${activeIncident.latestReading.mq135} ADC` : "NOT AVAILABLE", c: "#F4B942" },
-                { l: "MQ-2 READING",    v: activeIncident.latestReading ? `${activeIncident.latestReading.mq2} ADC` : "NOT AVAILABLE",   c: "#F4B942" },
-                { l: "TEMPERATURE",     v: activeIncident.latestReading ? `${activeIncident.latestReading.temperature.toFixed(2)}°C` : "NOT AVAILABLE", c: "#8C9199" },
-                { l: "HUMIDITY",        v: activeIncident.latestReading ? `${activeIncident.latestReading.humidity.toFixed(2)}%` : "NOT AVAILABLE", c: "#8C9199" },
-              ].map(r => (
-                <div key={r.l} className={`flex items-center gap-3 py-2.5 border-b ${bdr} last:border-0`}>
-                  <span className={`font-mono text-[8.5px] tracking-widest flex-1 ${muted}`}>{r.l}</span>
-                  <span className="font-mono text-[11px]" style={{ color: r.c }}>{r.v}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
+        
         {/* Action buttons */}
         <div className={`panel ${cBg} p-4`}>
           <div className="flex flex-wrap gap-3 items-center">
