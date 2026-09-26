@@ -175,7 +175,7 @@ def record_alert_event(
 def display_result(prediction: str) -> str:
     return {
         "WEATHER": "CAUTION",
-        "EXPLOSIVE": "ALCOHOL PROXY",
+        "ALCOHOL": "ALCOHOL PROXY",
         "NARCOTIC": "NARCOTIC PROXY",
     }.get(prediction, prediction)
 
