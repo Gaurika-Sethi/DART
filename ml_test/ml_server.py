@@ -1017,11 +1017,6 @@ def predict_endpoint():
             f"{confidence:.4f}"
         )
 
-        print(
-            f"Sensor Region : "
-            f"{sensor_region}"
-        )
-
         print()
         print("Features:")
 
