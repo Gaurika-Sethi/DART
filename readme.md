@@ -139,7 +139,7 @@ without compensation versus 87.90% with compensation.
 The weather robustness evaluation covered dry, normal, humid, very humid,
 cold, hot, hot+humid, and hot+dry conditions. Random Forest SAFE accuracy
 ranged from 37.5% to 96.5% across those synthetic stress conditions, while
-WEATHER accuracy ranged from 87.0% to 99.0%. These are synthetic robustness
+WEATHER accuracy is approx 87.0%. These are synthetic robustness
 measurements, not laboratory or field performance claims.
 
 ## Generated Artifacts
