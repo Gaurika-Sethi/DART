@@ -149,7 +149,6 @@ measurements, not laboratory or field performance claims.
 - `results/` contains evaluation JSON, TinyML metadata, and visualizations.
 
 ## Notes
-
 - The included datasets are synthetic and should not be treated as evidence of real-world detection performance.
 - Model preprocessing parameters must remain paired with the model that produced them.
 - Evaluation scripts validate the expected final-test size and class distribution before reporting metrics.
