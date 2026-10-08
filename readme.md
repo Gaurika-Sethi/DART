@@ -64,7 +64,6 @@ pnpm dev
 The fake sender uses `SENTRY_BACKEND_URL` when a different ingestion URL is required. The backend settings are listed in `backend/.env.example`.
 
 ## Machine-Learning Setup
-
 Requirements: Python 3.10+ and the packages imported by the scripts in `ml/` (including NumPy, pandas, scikit-learn, joblib, matplotlib, and TensorFlow).
 
 Create and activate a virtual environment from the repository root, then install the required packages with your preferred package manager. For example:
@@ -143,7 +142,6 @@ WEATHER accuracy is approx 87.0%. These are synthetic robustness
 measurements, not laboratory or field performance claims.
 
 ## Generated Artifacts
-
 - `models/random_forest/` contains the Random Forest model and label encoder.
 - `models/tinyml/` contains the Keras model, TensorFlow Lite model, label classes, and scaler parameters.
 - `results/` contains evaluation JSON, TinyML metadata, and visualizations.
